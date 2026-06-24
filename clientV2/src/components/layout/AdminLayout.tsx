@@ -1,0 +1,21 @@
+import { Outlet } from "react-router-dom"
+
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
+import Appbar from "@/components/appbar/Appbar"
+
+export default function AdminLayout() {
+  return (
+    <>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <Appbar />
+          <main>
+            <Outlet />
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </>
+  )
+}
