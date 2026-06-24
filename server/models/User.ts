@@ -1,13 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export const ROLES = {
   ADMIN: 1,
   FACULTY: 2,
   STUDENT: 3,
-};
+} as const;
 
-const userSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  role: number;
+  faculty_id?: mongoose.Types.ObjectId | null;
+  matchPassword(enteredPassword: string): Promise<boolean>;
+}
+
+interface IUserModel extends Model<IUser> {}
+
+const userSchema = new mongoose.Schema<IUser, IUserModel>(
   {
     name: {
       type: String,
@@ -29,20 +40,18 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
     role: {
-      type: String,
+      type: Number,
       enum: [1, 2, 3],
       default: 3,
       required: true,
     },
-    // Only relevant when role === 3 (student)
-    // References the faculty member (User with role 2) assigned to this student
     faculty_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
       validate: {
-        validator: async function (facultyId) {
-          if (!facultyId) return true; // null is allowed
+        validator: async function (facultyId: mongoose.Types.ObjectId) {
+          if (!facultyId) return true;
           const faculty = await mongoose.model("User").findById(facultyId);
           return faculty && faculty.role === ROLES.FACULTY;
         },
@@ -62,10 +71,12 @@ userSchema.pre("save", async function () {
 });
 
 // Instance method to compare entered password with hashed password
-userSchema.methods.matchPassword = async function (enteredPassword) {
+userSchema.methods.matchPassword = async function (
+  enteredPassword: string,
+): Promise<boolean> {
   return bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model<IUser, IUserModel>("User", userSchema);
 
 export default User;
