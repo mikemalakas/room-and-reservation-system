@@ -5,10 +5,10 @@ import { Loader2, Pencil, Trash2 } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Outlet, useMatch } from "react-router-dom"
 
-export default function EquipmentPage() {
+export default function Index() {
   const { equipments, loading, error, deleteEquipment } = useEquipmentStore()
 
-  const isIndex = useMatch("/faculty/equipment")
+  const isIndex = useMatch("/admin/equipment")
 
   const handleDelete = async (id: string) => {
     await deleteEquipment(id)
@@ -49,7 +49,7 @@ export default function EquipmentPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {equipments.map((item) => (
-            <Link to={`/faculty/equipment/${item._id}`} key={item._id}>
+            <Link to={`/admin/equipment/${item._id}`} key={item._id}>
               <EquipmentCard
                 equipment={item}
                 actions={[
