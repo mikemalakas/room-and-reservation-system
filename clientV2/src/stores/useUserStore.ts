@@ -6,6 +6,7 @@ export interface IUser {
   name: string
   email: string
   role: number
+  password?: string
   faculty_id?: {
     _id: string
     name: string
@@ -14,12 +15,20 @@ export interface IUser {
   createdAt: string
 }
 
+interface CreateUserData {
+  name: string
+  email: string
+  password: string
+  role: number
+}
+
 interface UserStore {
   users: IUser[]
   loading: boolean
   error: string | null
   fetchUsers: () => Promise<void>
   deleteUser: (id: string) => Promise<void>
+  createUser: (user: CreateUserData) => Promise<void>
   addUser: (user: IUser) => void
   updateUser: (user: IUser) => void
 }
@@ -48,6 +57,12 @@ export const useUserStore = create<UserStore>((set) => ({
     } catch (err: any) {
       set({ error: err.response?.data?.message ?? "Failed to delete user" })
     }
+  },
+
+  // in useUserStore
+  createUser: async (data: CreateUserData) => {
+    const res = await api.post("/users", data)
+    set((state) => ({ users: [...state.users, res.data.data] }))
   },
 
   addUser: (user) => set((state) => ({ users: [...state.users, user] })),

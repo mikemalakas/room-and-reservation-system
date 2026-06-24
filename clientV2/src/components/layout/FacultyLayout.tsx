@@ -3,15 +3,8 @@ import { Outlet } from "react-router-dom"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
 import Appbar from "@/components/appbar/Appbar"
-import { useUserStore } from "@/stores/useUserStore.ts"
-import { useEffect } from "react"
 
-export default function AdminLayout() {
-  const { fetchUsers } = useUserStore()
-
-  useEffect(() => {
-    fetchUsers()
-  }, [])
+export default function FacultyLayout() {
   return (
     <>
       <SidebarProvider>

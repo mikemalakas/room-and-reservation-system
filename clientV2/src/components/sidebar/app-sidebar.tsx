@@ -56,7 +56,7 @@ export function AppSidebar() {
                 <div className="flex flex-col leading-tight">
                   <span className="text-sm font-semibold">MyApp</span>
                   <span className="text-xs text-muted-foreground">
-                    Admin Panel
+                    {userStore.user?.role} panel
                   </span>
                 </div>
               </Link>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useUserStore } from "@/stores/useUserStore"
 import {
   Table,
@@ -22,7 +22,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Pencil, Trash2, UserPlus, Loader2 } from "lucide-react"
+import { Pencil, Trash2, Loader2 } from "lucide-react"
+import AddUser from "@/components/button/AddUser"
 
 const ROLE_MAP: Record<
   number,
@@ -39,13 +40,9 @@ const ROLE_MAP: Record<
 const ITEMS_PER_PAGE = 10
 
 export default function UsersTable() {
-  const { users, loading, error, fetchUsers, deleteUser } = useUserStore()
+  const { users, loading, error, deleteUser } = useUserStore()
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-
-  useEffect(() => {
-    fetchUsers()
-  }, [])
 
   const filtered = users.filter(
     (u) =>
@@ -74,10 +71,7 @@ export default function UsersTable() {
             Manage all system users
           </p>
         </div>
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User
-        </Button>
+        <AddUser />
       </div>
 
       {/* Search */}
