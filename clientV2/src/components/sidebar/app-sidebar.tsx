@@ -5,6 +5,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
@@ -24,6 +25,14 @@ export function AppSidebar() {
   const userStore = useAuthStore()
   const items = extractSidebarItems(routes, userStore.user?.role ?? "")
 
+  // Group items by their group label, ungrouped items fall under "General"
+  const grouped = items.reduce<Record<string, typeof items>>((acc, item) => {
+    const key = item.group ?? "General"
+    if (!acc[key]) acc[key] = []
+    acc[key].push(item)
+    return acc
+  }, {})
+
   const handleLogout = async () => {
     try {
       await api.post("/auth/logout")
@@ -33,35 +42,59 @@ export function AppSidebar() {
       console.error(err)
     }
   }
+
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader />
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link to="/" className="flex items-center gap-2">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
+                  <Icons.Book className="h-4 w-4 text-primary-foreground" />
+                </div>
+                <div className="flex flex-col leading-tight">
+                  <span className="text-sm font-semibold">MyApp</span>
+                  <span className="text-xs text-muted-foreground">
+                    Admin Panel
+                  </span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
-                const Icon = Icons[
-                  item.icon as keyof typeof Icons
-                ] as React.ElementType
-                return (
-                  <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={location.pathname === item.path}
-                    >
-                      <Link to={item.path}>
-                        {Icon && <Icon />}
-                        <span>{item.label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {Object.entries(grouped).map(([group, groupItems]) => (
+          <SidebarGroup key={group}>
+            <SidebarGroupLabel>{group}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {groupItems.map((item) => {
+                  const Icon = Icons[
+                    item.icon as keyof typeof Icons
+                  ] as React.ElementType
+                  return (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={location.pathname === item.path}
+                      >
+                        <Link to={item.path}>
+                          {Icon && <Icon />}
+                          <span>{item.label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
+
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
