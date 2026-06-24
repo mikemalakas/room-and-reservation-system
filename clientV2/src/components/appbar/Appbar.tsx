@@ -4,7 +4,6 @@ import { ToggleTheme } from "@/components/button/ToggleTheme"
 
 export default function Appbar() {
   const userStore = useAuthStore()
-  console.log(userStore)
   return (
     <>
       <header className="flex h-16 items-center gap-2 border-b px-4">
