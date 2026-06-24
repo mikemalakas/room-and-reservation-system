@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import "multer";
 import User, { IUser } from "../models/User";
 
 interface JwtPayload {
@@ -8,6 +9,7 @@ interface JwtPayload {
 
 export interface AuthRequest extends Request {
   user?: IUser;
+  file?: Express.Multer.File;
 }
 
 // Verifies the JWT cookie and attaches the user to req.user

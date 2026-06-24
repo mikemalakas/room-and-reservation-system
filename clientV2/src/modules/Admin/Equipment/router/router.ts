@@ -11,7 +11,7 @@ const routes: RouteObject[] = [
       label: "Equipment",
       icon: "Toolbox",
       showInSidebar: true,
-      roles: ["faculty"],
+      roles: ["admin"],
       group: "Management",
     },
     children: [
