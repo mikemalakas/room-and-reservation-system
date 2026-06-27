@@ -1,21 +1,21 @@
-import type { RouteObject } from "react-router-dom";
-import StudentLayout from "@/components/Layout/StudentLayout.tsx";
-import React from "react";
+import type { RouteObject } from "react-router-dom"
+import StudentLayout from "@/components/layout/StudentLayout"
+import React from "react"
 
-const routes: RouteObject[] = [];
+const routes: RouteObject[] = []
 
 Object.values(
   import.meta.glob("@/modules/Student/*/router/router.ts", {
     eager: true,
-  }),
+  })
 ).forEach((mod) => {
-  const r = (mod as { default: RouteObject | RouteObject[] }).default;
+  const r = (mod as { default: RouteObject | RouteObject[] }).default
   if (Array.isArray(r)) {
-    routes.push(...r);
+    routes.push(...r)
   } else {
-    routes.push(r);
+    routes.push(r)
   }
-});
+})
 
 export default [
   {
@@ -23,4 +23,4 @@ export default [
     element: React.createElement(StudentLayout),
     children: routes,
   },
-];
+]

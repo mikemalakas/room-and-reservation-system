@@ -9,10 +9,24 @@ import { ROLES } from "../models/User";
 // @access  Private
 export const getEquipment = async (req: AuthRequest, res: Response) => {
   try {
-    const isFaculty = req.user?.role === ROLES.FACULTY;
+    const role = req.user?.role;
 
-    const filter = isFaculty ? { "createdBy.user": req.user?._id } : {};
+    let filter: Record<string, any> = {};
 
+    if (role === ROLES.FACULTY) {
+      filter = { "createdBy.user": req.user?._id };
+    } else if (role === ROLES.STUDENT) {
+      if (!req.user?.faculty_id) {
+        return res.status(200).json({ data: [] });
+      }
+
+      filter = {
+        isAvailable: true,
+        "createdBy.user": req.user?.faculty_id,
+      };
+    }
+
+    // then after the query runs:
     const equipment = await Equipment.find(filter)
       .populate("createdBy.user", "name email")
       .sort({ createdAt: -1 });

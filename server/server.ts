@@ -8,6 +8,7 @@ import connectDB from "./db/connections";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import equipmentRoutes from "./routes/equipmentRoutes";
+import reservationRoutes from "./routes/reservationRoutes";
 
 connectDB();
 
@@ -34,6 +35,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 app.use("/api/equipments", equipmentRoutes);
+app.use("/api/reservation", reservationRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

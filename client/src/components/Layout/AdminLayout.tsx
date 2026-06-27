@@ -1,27 +1,31 @@
-import { Outlet } from "react-router-dom";
-import { Box, CssBaseline, Toolbar } from "@mui/material";
+import { Outlet } from "react-router-dom"
 
-import Header from "@/components/Appbar/Header";
-import Sidebar from "@/components/Sidebar/Sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
+import Appbar from "@/components/appbar/Appbar"
+import { useUserStore } from "@/stores/useUserStore.ts"
+import { useEquipmentStore } from "@/stores/useEquipmentStore"
+import { useEffect } from "react"
 
 export default function AdminLayout() {
+  const { fetchUsers } = useUserStore()
+  const { fetchEquipment } = useEquipmentStore()
+
+  useEffect(() => {
+    fetchUsers()
+    fetchEquipment()
+  }, [])
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-
-      <Header title="Welcome Admin" />
-      <Sidebar />
-
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-        }}
-      >
-        <Toolbar />
-        <Outlet />
-      </Box>
-    </Box>
-  );
+    <>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <Appbar />
+          <main className="md:p-4">
+            <Outlet />
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </>
+  )
 }

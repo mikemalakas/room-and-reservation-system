@@ -1,10 +1,10 @@
-import Button from "@mui/material/Button";
+import { Button } from "@/components/ui/button"
 
 export default function Index() {
   return (
     <>
-      <Button variant="contained">Hello world</Button>
+      <Button variant="default">Hello world</Button>
       <div>Hi Admin</div>
     </>
-  );
+  )
 }
