@@ -1,44 +1,44 @@
-import type { RouteObject } from "react-router-dom";
+import type { RouteObject } from "react-router-dom"
 
 export type SidebarItem = {
-  path: string;
-  label: string;
-  icon?: string;
-};
+  path: string
+  label: string
+  icon?: string
+  group?: string
+}
 
 export function extractSidebarItems(
   routes: RouteObject[],
-  userRole: string,
+  userRole: string
 ): SidebarItem[] {
-  const items: SidebarItem[] = [];
+  const items: SidebarItem[] = []
 
   function walk(routes: RouteObject[], parentPath = "") {
     for (const route of routes) {
       const fullPath = route.path
         ? `${parentPath}/${route.path}`.replace(/\/+/g, "/")
-        : parentPath;
+        : parentPath
 
-      const handle = route.handle as any;
-
-      const allowedRoles = handle?.roles;
-
-      const isAllowed = !allowedRoles || allowedRoles.includes(userRole);
+      const handle = route.handle as any
+      const allowedRoles = handle?.roles
+      const isAllowed = !allowedRoles || allowedRoles.includes(userRole)
 
       if (handle?.showInSidebar && isAllowed) {
         items.push({
           path: fullPath,
           label: handle.label,
           icon: handle.icon,
-        });
+          group: handle.group,
+        })
       }
 
       if (route.children) {
-        walk(route.children, fullPath);
+        walk(route.children, fullPath)
       }
     }
   }
 
-  walk(routes);
+  walk(routes)
 
-  return items;
+  return items
 }

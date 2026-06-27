@@ -3,6 +3,7 @@ import mongoose, { Document, Model } from "mongoose";
 export interface IEquipment extends Document {
   name: string;
   description: string;
+  quantity: number;
   isAvailable: boolean;
   image: {
     url: string;
@@ -30,10 +31,17 @@ const equipmentSchema = new mongoose.Schema<IEquipment, IEquipmentModel>(
       required: [true, "Description is required"],
       trim: true,
     },
+    quantity: {
+      type: Number,
+      required: [true, "Quantity is required"],
+      min: [0, "Quantity cannot be negative"],
+      default: 1,
+    },
     isAvailable: {
       type: Boolean,
       default: true,
     },
+
     image: {
       url: {
         type: String,
@@ -58,6 +66,13 @@ const equipmentSchema = new mongoose.Schema<IEquipment, IEquipmentModel>(
   },
   { timestamps: true },
 );
+
+// Auto-set isAvailable to false when quantity reaches 0
+equipmentSchema.pre("save", function () {
+  if (this.isModified("quantity")) {
+    this.isAvailable = this.quantity > 0;
+  }
+});
 
 const Equipment = mongoose.model<IEquipment, IEquipmentModel>(
   "Equipment",

@@ -1,12 +1,18 @@
-import type { RouteObject } from "react-router-dom";
+import type { RouteObject } from "react-router-dom"
 
-import Index from "../Index";
+import Index from "../Index"
 
 const routes: RouteObject[] = [
   {
     index: true,
     Component: Index,
+    handle: {
+      label: "Dashboard",
+      icon: "LayoutDashboard",
+      showInSidebar: true,
+      roles: ["admin"],
+    },
   },
-];
+]
 
-export default routes;
+export default routes

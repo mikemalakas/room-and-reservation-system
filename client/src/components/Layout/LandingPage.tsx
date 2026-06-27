@@ -1,105 +1,100 @@
-import { useState } from "react";
-import api from "@/services/api.tsx";
-import roleRoute from "@/utils/roleRoute";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useState } from "react"
+import api from "@/services/api.tsx"
+import roleRoute from "@/utils/roleRoute"
+import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "@/stores/useAuthStore"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
-  Box,
-  Button,
   Card,
   CardContent,
-  TextField,
-  Typography,
-  Alert,
-  Icon,
-} from "@mui/material";
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle, Loader2 } from "lucide-react"
 
 export default function LandingPage() {
-  const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate()
+  const setUser = useAuthStore((state) => state.setUser)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setError("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
 
     try {
-      const user = await api.post("/auth/login", { email, password });
-      setUser(user.data);
-      navigate(roleRoute[user.data.roleName]);
+      const user = await api.post("/auth/login", { email, password })
+      setUser(user.data)
+      navigate(roleRoute[user.data.roleName])
     } catch (err: any) {
-      setError(err.response?.data?.message ?? "Invalid email or password");
+      setError(err.response?.data?.message ?? "Invalid email or password")
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "grey.100",
-      }}
-    >
-      <Card sx={{ width: 360, borderRadius: 3, boxShadow: 4 }}>
-        <CardContent sx={{ p: 4 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              mb: 3,
-            }}
-          >
-            <Box
-              sx={{
-                bgcolor: "primary.main",
-                borderRadius: "50%",
-                p: 1.5,
-                mb: 1,
-                display: "flex",
-              }}
-            >
-              {/* <LockOutlinedIcon sx={{ color: "white" }} /> */}
-              <Icon sx={{ color: "white" }}>lockoutlined</Icon>
-            </Box>
-            <Typography variant="h6">Sign in</Typography>
-          </Box>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-semibold">Sign in</CardTitle>
+          <CardDescription>
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-          <Box component="form" onSubmit={handleSubmit}>
-            <TextField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              fullWidth
-              required
-              sx={{ mb: 2 }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              fullWidth
-              required
-              sx={{ mb: 3 }}
-            />
-            <Button type="submit" variant="contained" fullWidth size="large">
-              Login
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
-          </Box>
-        </CardContent>
+          </CardFooter>
+        </form>
       </Card>
-    </Box>
-  );
+    </div>
+  )
 }
