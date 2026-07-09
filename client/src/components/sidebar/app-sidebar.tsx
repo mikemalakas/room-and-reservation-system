@@ -81,7 +81,7 @@ export function AppSidebar() {
                         asChild
                         isActive={location.pathname === item.path}
                       >
-                        <Link to={item.path}>
+                        <Link to={item.path} viewTransition>
                           {Icon && <Icon />}
                           <span>{item.label}</span>
                         </Link>
